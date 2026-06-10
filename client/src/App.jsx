@@ -8,7 +8,7 @@ function Home() {
           WorkspacePro
         </h1>
         <p className="text-slate-400 mb-6 font-medium">
-          Day 1 setup complete: MERN application scaffolded with database connection and user authentication backend.
+          MERN application scaffolded with database connection and user authentication backend.
         </p>
         <div className="flex flex-col gap-3">
           <Link
@@ -34,7 +34,7 @@ function LoginPlaceholder() {
     <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-6">
       <div className="max-w-md w-full bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-700">
         <h2 className="text-2xl font-bold text-center mb-6">Login to WorkspacePro</h2>
-        <p className="text-slate-400 text-center mb-6">Authentication forms will be fully integrated tomorrow on Day 2.</p>
+        <p className="text-slate-400 text-center mb-6">Authentication forms will be fully integrated next.</p>
         <Link to="/" className="block text-center text-indigo-400 hover:underline">Back to Home</Link>
       </div>
     </div>
@@ -46,7 +46,7 @@ function RegisterPlaceholder() {
     <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-6">
       <div className="max-w-md w-full bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-700">
         <h2 className="text-2xl font-bold text-center mb-6">Register Account</h2>
-        <p className="text-slate-400 text-center mb-6">Registration forms will be fully integrated tomorrow on Day 2.</p>
+        <p className="text-slate-400 text-center mb-6">Registration forms will be fully integrated next.</p>
         <Link to="/" className="block text-center text-indigo-400 hover:underline">Back to Home</Link>
       </div>
     </div>
