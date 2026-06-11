@@ -95,6 +95,37 @@ async function runTests() {
     }
     console.log('✓ Invalid password check PASSED');
     
+    // Test 5: Get Profile with Valid Token
+    console.log('\n[Test 5] Fetching user profile with valid token...');
+    const profileRes = await fetch(`${baseUrl}/profile`, {
+      method: 'GET',
+      headers: { 
+        'Authorization': `Bearer ${loginData.token}`
+      }
+    });
+    const profileData = await profileRes.json();
+    console.log(`Response Status: ${profileRes.status}`);
+    console.log('Response Body:', profileData);
+    
+    if (profileRes.status !== 200 || profileData.email !== testEmail) {
+      throw new Error('Get profile with valid token failed!');
+    }
+    console.log('✓ Get profile with valid token PASSED');
+    
+    // Test 6: Get Profile without Token
+    console.log('\n[Test 6] Fetching user profile without token...');
+    const noTokenRes = await fetch(`${baseUrl}/profile`, {
+      method: 'GET'
+    });
+    const noTokenData = await noTokenRes.json();
+    console.log(`Response Status: ${noTokenRes.status}`);
+    console.log('Response Body:', noTokenData);
+    
+    if (noTokenRes.status !== 401) {
+      throw new Error('Get profile without token check failed!');
+    }
+    console.log('✓ Get profile without token check PASSED');
+    
     // Clean up test data
     console.log('\n[Cleanup] Removing test user from database...');
     const User = require('./models/User');
