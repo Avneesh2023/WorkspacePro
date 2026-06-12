@@ -23,6 +23,18 @@ const Clients = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this client?')) return;
+    try {
+      await clientService.deleteClient(id);
+      setClients(clients.filter((c) => c._id !== id));
+      if (selectedClient?._id === id) setSelectedClient(null);
+    } catch (err) {
+      alert('Failed to delete client.');
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchClients();
   }, []);
@@ -107,6 +119,7 @@ const Clients = () => {
                           Edit
                         </Link>
                         <button
+                          onClick={() => handleDelete(client._id)}
                           className="text-red-400 hover:text-red-300 font-semibold cursor-pointer"
                         >
                           Delete
