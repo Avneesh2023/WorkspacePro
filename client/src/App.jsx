@@ -4,6 +4,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Clients from './pages/Clients';
+import CreateClient from './pages/CreateClient';
+import EditClient from './pages/EditClient';
 
 function HomeContent() {
   const { user } = useAuth();
@@ -68,6 +71,30 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clients"
+            element={
+              <ProtectedRoute>
+                <Clients />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clients/create"
+            element={
+              <ProtectedRoute>
+                <CreateClient />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clients/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditClient />
               </ProtectedRoute>
             }
           />

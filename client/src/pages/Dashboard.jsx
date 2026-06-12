@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
@@ -124,12 +125,12 @@ const Dashboard = () => {
                 </li>
               </ul>
             </div>
-            <button
-              onClick={() => alert('Clients modules and workspace actions are scheduled next!')}
-              className="mt-6 w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 transition-all rounded-xl font-semibold text-white shadow-lg shadow-indigo-600/10 text-sm"
+            <Link
+              to="/clients"
+              className="mt-6 w-full text-center py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 transition-all rounded-xl font-semibold text-white shadow-lg shadow-indigo-600/10 text-sm block"
             >
-              Go to Projects Workspace
-            </button>
+              Go to Clients Workspace
+            </Link>
           </div>
         </div>
       </main>
