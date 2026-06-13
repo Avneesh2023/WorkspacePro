@@ -7,6 +7,7 @@ const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteSuccess, setDeleteSuccess] = useState('');
 
   const { logout } = useAuth();
 
@@ -29,6 +30,8 @@ const Projects = () => {
     try {
       await projectService.deleteProject(id);
       setProjects(projects.filter((p) => p._id !== id));
+      setDeleteSuccess('Project deleted successfully.');
+      setTimeout(() => setDeleteSuccess(''), 3000);
     } catch (err) {
       alert('Failed to delete project.');
       console.error(err);
@@ -90,6 +93,12 @@ const Projects = () => {
             Create Project
           </Link>
         </div>
+
+        {deleteSuccess && (
+          <div className="mb-6 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold animate-in fade-in duration-200">
+            {deleteSuccess}
+          </div>
+        )}
 
         {loading ? (
           <div className="h-64 flex flex-col justify-center items-center">
