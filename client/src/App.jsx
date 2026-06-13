@@ -7,6 +7,10 @@ import Dashboard from './pages/Dashboard';
 import Clients from './pages/Clients';
 import CreateClient from './pages/CreateClient';
 import EditClient from './pages/EditClient';
+import Projects from './pages/Projects';
+import CreateProject from './pages/CreateProject';
+import EditProject from './pages/EditProject';
+import ProjectDetails from './pages/ProjectDetails';
 
 function HomeContent() {
   const { user } = useAuth();
@@ -95,6 +99,38 @@ function App() {
             element={
               <ProtectedRoute>
                 <EditClient />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <Projects />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/create"
+            element={
+              <ProtectedRoute>
+                <CreateProject />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditProject />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/:id"
+            element={
+              <ProtectedRoute>
+                <ProjectDetails />
               </ProtectedRoute>
             }
           />

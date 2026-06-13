@@ -18,9 +18,11 @@ const Dashboard = () => {
               <span className="text-2xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                 WorkspacePro
               </span>
-              <span className="hidden sm:inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700">
-                MVP v1.0
-              </span>
+              <div className="hidden md:flex items-center gap-6 ml-8 font-semibold text-sm text-slate-350">
+                <Link to="/dashboard" className="text-indigo-400">Dashboard</Link>
+                <Link to="/clients" className="hover:text-white transition-colors">Clients</Link>
+                <Link to="/projects" className="hover:text-white transition-colors">Projects</Link>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="hidden md:flex flex-col items-end">
@@ -125,12 +127,20 @@ const Dashboard = () => {
                 </li>
               </ul>
             </div>
-            <Link
-              to="/clients"
-              className="mt-6 w-full text-center py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 transition-all rounded-xl font-semibold text-white shadow-lg shadow-indigo-600/10 text-sm block"
-            >
-              Go to Clients Workspace
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3 mt-6">
+              <Link
+                to="/clients"
+                className="w-full text-center py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 transition-all rounded-xl font-semibold text-white shadow-lg shadow-indigo-600/10 text-sm block"
+              >
+                Clients Workspace
+              </Link>
+              <Link
+                to="/projects"
+                className="w-full text-center py-2.5 px-4 bg-slate-800 hover:bg-slate-700 transition-all rounded-xl font-semibold text-slate-300 border border-slate-750 text-sm block"
+              >
+                Projects Workspace
+              </Link>
+            </div>
           </div>
         </div>
       </main>

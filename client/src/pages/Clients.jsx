@@ -61,6 +61,9 @@ const Clients = () => {
                 <Link to="/clients" className="text-indigo-400 transition-colors">
                   Clients
                 </Link>
+                <Link to="/projects" className="hover:text-white transition-colors">
+                  Projects
+                </Link>
               </div>
             </div>
             <div className="flex items-center gap-4">
