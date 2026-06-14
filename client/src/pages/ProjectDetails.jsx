@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import projectService from '../services/projectService';
+import taskService from '../services/taskService';
 
 const ProjectDetails = () => {
   const { id } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [tasks, setTasks] = useState([]);
+  const [tasksLoading, setTasksLoading] = useState(true);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -20,7 +23,20 @@ const ProjectDetails = () => {
         setLoading(false);
       }
     };
+
+    const fetchTasks = async () => {
+      try {
+        const data = await taskService.getTasks(id);
+        setTasks(data);
+      } catch (err) {
+        console.error('Failed to load tasks:', err);
+      } finally {
+        setTasksLoading(false);
+      }
+    };
+
     fetchDetails();
+    fetchTasks();
   }, [id]);
 
   if (loading) {
@@ -112,23 +128,72 @@ const ProjectDetails = () => {
               </p>
             </div>
 
-            {/* Task Integration Section (Placeholder layout for future task board integration) */}
+            {/* Task Integration Section */}
             <div className="p-6 rounded-2xl border border-slate-850 bg-slate-900/20 backdrop-blur-md">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-white">Tasks & Deliverables</h3>
-                <span className="px-2 py-0.5 bg-slate-800 text-slate-400 rounded text-[10px] font-bold uppercase tracking-wider">
-                  Upcoming Feature
-                </span>
+                <Link
+                  to={`/tasks/create?projectId=${project._id}`}
+                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 transition-colors rounded-lg text-xs font-bold text-white shadow-md"
+                >
+                  Create Task
+                </Link>
               </div>
-              <div className="p-8 border border-dashed border-slate-800 rounded-xl text-center bg-slate-900/10">
-                <svg className="w-10 h-10 text-slate-650 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-                <h4 className="text-sm font-bold text-slate-350">No Tasks Assigned</h4>
-                <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
-                  Day 5 will introduce task cards and status columns directly linked to this project workspace.
-                </p>
-              </div>
+
+              {tasksLoading ? (
+                <div className="py-6 text-center text-slate-400 text-sm font-medium">Loading tasks...</div>
+              ) : tasks.length === 0 ? (
+                <div className="p-8 border border-dashed border-slate-800 rounded-xl text-center bg-slate-900/10">
+                  <svg className="w-10 h-10 text-slate-650 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <h4 className="text-sm font-bold text-slate-350">No Tasks Assigned</h4>
+                  <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
+                    Create tasks to manage steps and completion rates for this project.
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto rounded-xl border border-slate-850/80 bg-slate-950/20">
+                  <table className="min-w-full divide-y divide-slate-800/80">
+                    <thead className="bg-slate-900/40">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Title</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Priority</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Due Date</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/60 font-medium text-xs text-slate-300">
+                      {tasks.map((task) => (
+                        <tr key={task._id} className="hover:bg-slate-900/20">
+                          <td className="px-4 py-3 whitespace-nowrap font-bold text-slate-200">{task.title}</td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              task.priority === 'High' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                              task.priority === 'Medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                              'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                            }`}>
+                              {task.priority}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              task.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                              task.status === 'In Progress' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                              'bg-slate-500/10 text-slate-450 border border-slate-550/20'
+                            }`}>
+                              {task.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-slate-400">
+                            {task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
 
