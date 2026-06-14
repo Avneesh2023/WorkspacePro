@@ -22,6 +22,7 @@ const Dashboard = () => {
                 <Link to="/dashboard" className="text-indigo-400">Dashboard</Link>
                 <Link to="/clients" className="hover:text-white transition-colors">Clients</Link>
                 <Link to="/projects" className="hover:text-white transition-colors">Projects</Link>
+                <Link to="/tasks" className="hover:text-white transition-colors">Tasks</Link>
               </div>
             </div>
             <div className="flex items-center gap-4">

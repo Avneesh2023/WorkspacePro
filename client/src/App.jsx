@@ -11,6 +11,9 @@ import Projects from './pages/Projects';
 import CreateProject from './pages/CreateProject';
 import EditProject from './pages/EditProject';
 import ProjectDetails from './pages/ProjectDetails';
+import Tasks from './pages/Tasks';
+import CreateTask from './pages/CreateTask';
+import EditTask from './pages/EditTask';
 
 function HomeContent() {
   const { user } = useAuth();
@@ -131,6 +134,30 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProjectDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tasks"
+            element={
+              <ProtectedRoute>
+                <Tasks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tasks/create"
+            element={
+              <ProtectedRoute>
+                <CreateTask />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tasks/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditTask />
               </ProtectedRoute>
             }
           />
