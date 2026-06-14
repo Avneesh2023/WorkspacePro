@@ -41,6 +41,7 @@ const Tasks = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
+      // Trigger quick update in backend immediately
       const updated = await taskService.updateTask(id, { status: newStatus });
       // Update local state
       setTasks(tasks.map((t) => (t._id === id ? { ...t, status: updated.status } : t)));
