@@ -28,6 +28,7 @@ const Tasks = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this task?')) return;
     try {
+      // Trigger delete API call
       await taskService.deleteTask(id);
       setTasks(tasks.filter((t) => t._id !== id));
       setActionSuccess('Task deleted successfully.');
