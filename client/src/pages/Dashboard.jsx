@@ -7,18 +7,21 @@ const Dashboard = () => {
   const { user, logout } = useAuth();
   const [stats, setStats] = useState(null);
   const [recentProjects, setRecentProjects] = useState([]);
+  const [recentTasks, setRecentTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsData, projectsData] = await Promise.all([
+        const [statsData, projectsData, tasksData] = await Promise.all([
           dashboardService.getDashboardStats(),
-          dashboardService.getRecentProjects()
+          dashboardService.getRecentProjects(),
+          dashboardService.getRecentTasks()
         ]);
         setStats(statsData);
         setRecentProjects(projectsData);
+        setRecentTasks(tasksData);
       } catch (err) {
         setError('Failed to load dashboard data.');
         console.error(err);
@@ -146,6 +149,50 @@ const Dashboard = () => {
                             </span>
                             <span className="text-[10px] text-slate-550 block mt-1">
                               {new Date(project.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Recent Tasks Section */}
+                <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg">
+                  <h3 className="text-lg font-bold text-white mb-4 pb-2 border-b border-slate-800">Recent Tasks</h3>
+                  {recentTasks.length === 0 ? (
+                    <p className="text-slate-500 text-sm font-medium">No tasks found. Create your first task.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {recentTasks.map((task) => (
+                        <div key={task._id} className="flex justify-between items-center p-3 rounded-xl bg-slate-950/40 border border-slate-850 hover:border-slate-800 transition-colors">
+                          <div>
+                            <Link to="/tasks" className="font-bold text-slate-200 hover:text-indigo-400 text-sm block transition-colors">
+                              {task.title}
+                            </Link>
+                            <span className="text-xs text-slate-500 font-semibold mt-0.5 block">
+                              Project: {task.projectId?.title || '—'}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                                task.priority === 'High' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                                task.priority === 'Medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                                'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                              }`}>
+                                {task.priority}
+                              </span>
+                              <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                                task.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                                task.status === 'In Progress' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                                'bg-slate-550/10 text-slate-450 border border-slate-550/20'
+                              }`}>
+                                {task.status}
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-slate-550 block mt-1">
+                              Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : '—'}
                             </span>
                           </div>
                         </div>
