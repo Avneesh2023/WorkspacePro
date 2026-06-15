@@ -37,7 +37,7 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
-// @desc    Get recent 5 projects
+// @desc    Get recent 5 projects for dashboard
 // @route   GET /api/dashboard/recent-projects
 // @access  Private
 const getRecentProjects = async (req, res) => {
