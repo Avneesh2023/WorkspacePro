@@ -131,9 +131,40 @@ const Dashboard = () => {
         </div>
 
         {loading ? (
-          <div className="text-slate-400">Loading dashboard stats...</div>
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-12 h-12 border-4 border-indigo-500/25 border-t-indigo-500 rounded-full animate-spin"></div>
+            <p className="mt-4 text-slate-400 font-semibold text-sm">Loading dashboard...</p>
+          </div>
         ) : error ? (
-          <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl">{error}</div>
+          <div className="p-6 rounded-2xl bg-red-500/5 border border-red-500/15 flex flex-col items-center gap-4 text-center max-w-md mx-auto mt-12 shadow-xl animate-fadeIn">
+            <svg className="w-10 h-10 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+              <h4 className="font-bold text-white mb-1">Unable to load dashboard</h4>
+              <p className="text-slate-400 text-sm">Failed to retrieve dashboard metrics.</p>
+            </div>
+          </div>
+        ) : stats.totalClients === 0 ? (
+          <div className="p-8 rounded-2xl bg-slate-900/40 border border-slate-800 flex flex-col items-center text-center max-w-xl mx-auto mt-12 shadow-xl animate-fadeIn">
+            <div className="p-4 bg-indigo-500/10 rounded-full text-indigo-400 mb-6 animate-pulse">
+              <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">No data available yet</h3>
+            <p className="text-slate-400 text-sm max-w-sm mb-8">
+              Create your first client and project to start tracking your workspace tasks and visual analytics.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+              <Link to="/clients" className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 transition-all rounded-xl font-bold text-white shadow-lg shadow-indigo-600/10 text-sm">
+                Create First Client
+              </Link>
+              <Link to="/projects" className="px-6 py-3 bg-slate-800 hover:bg-slate-750 border border-slate-705 transition-all rounded-xl font-bold text-slate-350 text-sm">
+                Create First Project
+              </Link>
+            </div>
+          </div>
         ) : (
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
