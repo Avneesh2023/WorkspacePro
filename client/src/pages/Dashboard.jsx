@@ -2,6 +2,18 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import dashboardService from '../services/dashboardService';
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend
+} from 'recharts';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -37,6 +49,37 @@ const Dashboard = () => {
     };
     fetchData();
   }, []);
+
+  // Colors for project statuses
+  const PROJECT_STATUS_COLORS = {
+    'Planning': '#64748b',    // Slate
+    'In Progress': '#3b82f6', // Blue
+    'Review': '#f59e0b',      // Amber
+    'Completed': '#10b981'    // Emerald
+  };
+
+  // Colors for task statuses
+  const TASK_STATUS_COLORS = {
+    'Todo': '#94a3b8',        // Light Slate
+    'In Progress': '#6366f1', // Indigo
+    'Completed': '#10b981'    // Emerald
+  };
+
+  const projectChartData = projectStatus
+    ? Object.keys(projectStatus).map((key) => ({
+        name: key,
+        value: projectStatus[key],
+        color: PROJECT_STATUS_COLORS[key] || '#6366f1'
+      }))
+    : [];
+
+  const taskChartData = taskStatus
+    ? Object.keys(taskStatus).map((key) => ({
+        name: key,
+        value: taskStatus[key],
+        color: TASK_STATUS_COLORS[key] || '#6366f1'
+      }))
+    : [];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col relative overflow-hidden">
@@ -122,6 +165,72 @@ const Dashboard = () => {
               <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending</span>
                 <span className="text-3xl font-extrabold text-amber-400 mt-2">{stats.pendingTasks}</span>
+              </div>
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+              {/* Project Status Distribution BarChart */}
+              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col">
+                <h3 className="text-lg font-bold text-white mb-4 pb-2 border-b border-slate-800">
+                  Project Status Distribution
+                </h3>
+                <div className="h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={projectChartData}>
+                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                      <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#0f172a',
+                          borderColor: '#1e293b',
+                          borderRadius: '12px',
+                          color: '#f8fafc'
+                        }}
+                      />
+                      <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                        {projectChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Task Completion Rate PieChart */}
+              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col">
+                <h3 className="text-lg font-bold text-white mb-4 pb-2 border-b border-slate-800">
+                  Task Status Distribution
+                </h3>
+                <div className="h-64 w-full flex items-center justify-center relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={taskChartData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {taskChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#0f172a',
+                          borderColor: '#1e293b',
+                          borderRadius: '12px',
+                          color: '#f8fafc'
+                        }}
+                      />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
 
