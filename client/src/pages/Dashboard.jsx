@@ -9,22 +9,25 @@ const Dashboard = () => {
   const [recentProjects, setRecentProjects] = useState([]);
   const [recentTasks, setRecentTasks] = useState([]);
   const [projectStatus, setProjectStatus] = useState(null);
+  const [taskStatus, setTaskStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsData, projectsData, tasksData, projectStatusData] = await Promise.all([
+        const [statsData, projectsData, tasksData, projectStatusData, taskStatusData] = await Promise.all([
           dashboardService.getDashboardStats(),
           dashboardService.getRecentProjects(),
           dashboardService.getRecentTasks(),
-          dashboardService.getProjectStatusStats()
+          dashboardService.getProjectStatusStats(),
+          dashboardService.getTaskStatusStats()
         ]);
         setStats(statsData);
         setRecentProjects(projectsData);
         setRecentTasks(tasksData);
         setProjectStatus(projectStatusData);
+        setTaskStatus(taskStatusData);
       } catch (err) {
         setError('Failed to load dashboard data.');
         console.error(err);
