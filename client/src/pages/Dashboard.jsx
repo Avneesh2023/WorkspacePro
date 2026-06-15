@@ -6,22 +6,27 @@ import dashboardService from '../services/dashboardService';
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const [stats, setStats] = useState(null);
+  const [recentProjects, setRecentProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
-        const data = await dashboardService.getDashboardStats();
-        setStats(data);
+        const [statsData, projectsData] = await Promise.all([
+          dashboardService.getDashboardStats(),
+          dashboardService.getRecentProjects()
+        ]);
+        setStats(statsData);
+        setRecentProjects(projectsData);
       } catch (err) {
-        setError('Failed to load dashboard statistics.');
+        setError('Failed to load dashboard data.');
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-    fetchStats();
+    fetchData();
   }, []);
 
   return (
@@ -78,35 +83,77 @@ const Dashboard = () => {
         ) : error ? (
           <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl">{error}</div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {/* Clients Card */}
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Clients</span>
-              <span className="text-3xl font-extrabold text-white mt-2">{stats.totalClients}</span>
+          <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              {/* Clients Card */}
+              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Clients</span>
+                <span className="text-3xl font-extrabold text-white mt-2">{stats.totalClients}</span>
+              </div>
+
+              {/* Projects Card */}
+              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Projects</span>
+                <span className="text-3xl font-extrabold text-indigo-400 mt-2">{stats.totalProjects}</span>
+              </div>
+
+              {/* Tasks Card */}
+              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Tasks</span>
+                <span className="text-3xl font-extrabold text-purple-400 mt-2">{stats.totalTasks}</span>
+              </div>
+
+              {/* Completed Tasks Card */}
+              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Completed</span>
+                <span className="text-3xl font-extrabold text-emerald-400 mt-2">{stats.completedTasks}</span>
+              </div>
+
+              {/* Pending Tasks Card */}
+              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending</span>
+                <span className="text-3xl font-extrabold text-amber-400 mt-2">{stats.pendingTasks}</span>
+              </div>
             </div>
 
-            {/* Projects Card */}
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Projects</span>
-              <span className="text-3xl font-extrabold text-indigo-400 mt-2">{stats.totalProjects}</span>
-            </div>
-
-            {/* Tasks Card */}
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Tasks</span>
-              <span className="text-3xl font-extrabold text-purple-400 mt-2">{stats.totalTasks}</span>
-            </div>
-
-            {/* Completed Tasks Card */}
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Completed</span>
-              <span className="text-3xl font-extrabold text-emerald-400 mt-2">{stats.completedTasks}</span>
-            </div>
-
-            {/* Pending Tasks Card */}
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending</span>
-              <span className="text-3xl font-extrabold text-amber-400 mt-2">{stats.pendingTasks}</span>
+            <div className="space-y-8 mt-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Recent Projects Section */}
+                <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 shadow-lg">
+                  <h3 className="text-lg font-bold text-white mb-4 pb-2 border-b border-slate-800">Recent Projects</h3>
+                  {recentProjects.length === 0 ? (
+                    <p className="text-slate-500 text-sm font-medium">No projects found. Create your first project.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {recentProjects.map((project) => (
+                        <div key={project._id} className="flex justify-between items-center p-3 rounded-xl bg-slate-950/40 border border-slate-850 hover:border-slate-800 transition-colors">
+                          <div>
+                            <Link to={`/projects/${project._id}`} className="font-bold text-slate-200 hover:text-indigo-400 text-sm block transition-colors">
+                              {project.title}
+                            </Link>
+                            <span className="text-xs text-slate-500 font-semibold mt-0.5 block">
+                              Client: {project.clientId?.name || '—'}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                              project.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                              project.status === 'Review' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                              project.status === 'In Progress' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                              'bg-slate-500/10 text-slate-400 border border-slate-550/20'
+                            }`}>
+                              {project.status}
+                            </span>
+                            <span className="text-[10px] text-slate-550 block mt-1">
+                              {new Date(project.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}
