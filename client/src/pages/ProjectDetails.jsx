@@ -14,6 +14,7 @@ const ProjectDetails = () => {
   const [tasksLoading, setTasksLoading] = useState(true);
   const [files, setFiles] = useState([]);
   const [filesLoading, setFilesLoading] = useState(true);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -65,11 +66,18 @@ const ProjectDetails = () => {
   };
 
   const handleDeleteFile = async (fileId) => {
-    if (!window.confirm('Are you sure you want to delete this file? This action cannot be undone.')) {
+    if (deleteConfirmId !== fileId) {
+      setDeleteConfirmId(fileId);
+      // Auto-reset after 3 seconds
+      setTimeout(() => {
+        setDeleteConfirmId((prev) => (prev === fileId ? null : prev));
+      }, 3000);
       return;
     }
+
     try {
       await fileService.deleteFile(fileId);
+      setDeleteConfirmId(null);
       fetchFiles();
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to delete file.');
@@ -291,9 +299,13 @@ const ProjectDetails = () => {
                           </a>
                           <button
                             onClick={() => handleDeleteFile(file._id)}
-                            className="px-3 py-1.5 rounded-lg border border-red-900/30 hover:border-red-800/50 text-[10px] font-bold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 transition-all focus:outline-none"
+                            className={`px-3 py-1.5 rounded-lg border transition-all focus:outline-none text-[10px] font-bold ${
+                              deleteConfirmId === file._id
+                                ? 'border-red-500 bg-red-600 text-white hover:bg-red-500'
+                                : 'border-red-900/30 hover:border-red-800/50 text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40'
+                            }`}
                           >
-                            Delete
+                            {deleteConfirmId === file._id ? 'Confirm?' : 'Delete'}
                           </button>
                         </div>
                       </div>
