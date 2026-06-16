@@ -11,9 +11,14 @@ connectDB();
 
 const app = express();
 
+const path = require('path');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve uploads static directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
@@ -21,6 +26,7 @@ app.use('/api/clients', require('./routes/clientRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
 app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+app.use('/api/files', require('./routes/fileRoutes'));
 
 app.get('/', (req, res) => {
   res.send('WorkspacePro API is running...');
