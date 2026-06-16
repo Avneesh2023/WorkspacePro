@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import projectService from '../services/projectService';
 import taskService from '../services/taskService';
+import fileService from '../services/fileService';
+import FileUpload from '../components/FileUpload';
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -10,6 +12,8 @@ const ProjectDetails = () => {
   const [error, setError] = useState('');
   const [tasks, setTasks] = useState([]);
   const [tasksLoading, setTasksLoading] = useState(true);
+  const [files, setFiles] = useState([]);
+  const [filesLoading, setFilesLoading] = useState(true);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -35,9 +39,42 @@ const ProjectDetails = () => {
       }
     };
 
+    const fetchFiles = async () => {
+      try {
+        const data = await fileService.getProjectFiles(id);
+        setFiles(data);
+      } catch (err) {
+        console.error('Failed to load files:', err);
+      } finally {
+        setFilesLoading(false);
+      }
+    };
+
     fetchDetails();
     fetchTasks();
+    fetchFiles();
   }, [id]);
+
+  const fetchFiles = async () => {
+    try {
+      const data = await fileService.getProjectFiles(id);
+      setFiles(data);
+    } catch (err) {
+      console.error('Failed to reload files:', err);
+    }
+  };
+
+  const handleDeleteFile = async (fileId) => {
+    if (!window.confirm('Are you sure you want to delete this file? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      await fileService.deleteFile(fileId);
+      fetchFiles();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to delete file.');
+    }
+  };
 
   if (loading) {
     return (
@@ -194,6 +231,79 @@ const ProjectDetails = () => {
                   </table>
                 </div>
               )}
+            </div>
+
+            {/* Files & Assets Section */}
+            <div className="p-6 rounded-2xl border border-slate-850 bg-slate-900/20 backdrop-blur-md">
+              <h3 className="text-lg font-bold text-white mb-6">Files & Deliverables</h3>
+
+              {filesLoading ? (
+                <div className="py-6 text-center text-slate-400 text-sm font-medium">Loading files...</div>
+              ) : files.length === 0 ? (
+                <div className="p-8 border border-dashed border-slate-800 rounded-xl text-center bg-slate-900/10">
+                  <svg className="w-10 h-10 text-slate-650 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  <h4 className="text-sm font-bold text-slate-350">No Files Uploaded</h4>
+                  <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
+                    Upload project requirements, contracts, design drafts or invoices.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {files.map((file) => {
+                    const isImage = file.fileType?.startsWith('image/');
+                    return (
+                      <div key={file._id} className="flex items-center justify-between p-3 rounded-xl bg-slate-950/40 border border-slate-850 hover:border-slate-800 transition-colors">
+                        <div className="flex items-center gap-3">
+                          {/* Thumbnail / File Icon Preview */}
+                          {isImage ? (
+                            <img 
+                              src={file.fileUrl} 
+                              alt={file.fileName} 
+                              className="w-10 h-10 object-cover rounded-lg border border-slate-800 bg-slate-900"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg border border-slate-800 bg-slate-900/60 flex items-center justify-center text-slate-400">
+                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                          )}
+                          <div>
+                            <span className="text-sm font-bold text-slate-200 block truncate max-w-xs md:max-w-md">
+                              {file.fileName}
+                            </span>
+                            <span className="text-[10px] text-slate-550 font-semibold mt-0.5 block">
+                              Uploaded: {new Date(file.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={file.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 text-[10px] font-bold text-slate-300 hover:text-white bg-slate-900 transition-all focus:outline-none"
+                          >
+                            Open
+                          </a>
+                          <button
+                            onClick={() => handleDeleteFile(file._id)}
+                            className="px-3 py-1.5 rounded-lg border border-red-900/30 hover:border-red-800/50 text-[10px] font-bold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 transition-all focus:outline-none"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Upload component integration */}
+              <FileUpload projectId={project._id} onUploadSuccess={fetchFiles} />
             </div>
           </div>
 
