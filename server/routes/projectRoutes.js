@@ -9,16 +9,18 @@ const {
 } = require('../controllers/projectController');
 const { protect } = require('../middleware/authMiddleware');
 
+const { projectValidationRules } = require('../middleware/validationMiddleware');
+
 // Protect all project routes
 router.use(protect);
 
 router.route('/')
   .get(getProjects)
-  .post(createProject);
+  .post(projectValidationRules, createProject);
 
 router.route('/:id')
   .get(getProjectById)
-  .put(updateProject)
+  .put(projectValidationRules, updateProject)
   .delete(deleteProject);
 
 module.exports = router;
