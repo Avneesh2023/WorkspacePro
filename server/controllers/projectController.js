@@ -3,23 +3,28 @@ const Project = require('../models/Project');
 // @desc    Get all projects for logged-in user
 // @route   GET /api/projects
 // @access  Private
-const getProjects = async (req, res) => {
+const getProjects = async (req, res, next) => {
   try {
     const projects = await Project.find({ ownerId: req.user.id }).populate('clientId');
-    res.json(projects);
+    res.json({
+      success: true,
+      data: projects,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Create a new project
 // @route   POST /api/projects
 // @access  Private
-const createProject = async (req, res) => {
+const createProject = async (req, res, next) => {
   const { title, description, status, deadline, clientId } = req.body;
 
   if (!title || !clientId) {
-    return res.status(400).json({ message: 'Please add title and clientId' });
+    const error = new Error('Please add title and clientId');
+    error.statusCode = 400;
+    return next(error);
   }
 
   try {
@@ -34,46 +39,60 @@ const createProject = async (req, res) => {
     
     // Populate clientId info before returning
     const populatedProject = await Project.findById(project._id).populate('clientId');
-    res.status(201).json(populatedProject);
+    res.status(201).json({
+      success: true,
+      data: populatedProject,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Get single project by ID
 // @route   GET /api/projects/:id
 // @access  Private
-const getProjectById = async (req, res) => {
+const getProjectById = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id).populate('clientId');
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      const error = new Error('Project not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     // Verify ownership
     if (project.ownerId.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to access this project' });
+      const error = new Error('Not authorized to access this project');
+      error.statusCode = 403;
+      return next(error);
     }
 
-    res.json(project);
+    res.json({
+      success: true,
+      data: project,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Update project
 // @route   PUT /api/projects/:id
 // @access  Private
-const updateProject = async (req, res) => {
+const updateProject = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      const error = new Error('Project not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     // Verify ownership
     if (project.ownerId.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to access this project' });
+      const error = new Error('Not authorized to access this project');
+      error.statusCode = 403;
+      return next(error);
     }
 
     const updatedProject = await Project.findByIdAndUpdate(
@@ -82,31 +101,41 @@ const updateProject = async (req, res) => {
       { new: true, runValidators: true }
     ).populate('clientId');
 
-    res.json(updatedProject);
+    res.json({
+      success: true,
+      data: updatedProject,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Delete project
 // @route   DELETE /api/projects/:id
 // @access  Private
-const deleteProject = async (req, res) => {
+const deleteProject = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      const error = new Error('Project not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     // Verify ownership
     if (project.ownerId.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to access this project' });
+      const error = new Error('Not authorized to access this project');
+      error.statusCode = 403;
+      return next(error);
     }
 
     await Project.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Project removed' });
+    res.json({
+      success: true,
+      data: { message: 'Project removed' },
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 

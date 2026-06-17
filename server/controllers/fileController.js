@@ -6,26 +6,34 @@ const { uploadFileToCloud, deleteFileFromCloud } = require('../config/cloudinary
  * Uploads a new file belonging to a project.
  * POST /api/files/upload
  */
-exports.uploadFile = async (req, res) => {
+exports.uploadFile = async (req, res, next) => {
   try {
     const { projectId } = req.body;
     if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+      const error = new Error('No file uploaded');
+      error.statusCode = 400;
+      return next(error);
     }
 
     if (!projectId) {
-      return res.status(400).json({ error: 'projectId is required' });
+      const error = new Error('projectId is required');
+      error.statusCode = 400;
+      return next(error);
     }
 
     // 1. Fetch project to check ownership
     const project = await Project.findById(projectId);
     if (!project) {
-      return res.status(404).json({ error: 'Project not found' });
+      const error = new Error('Project not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     // 2. Access control check
     if (project.ownerId.toString() !== req.user.id) {
-      return res.status(403).json({ error: 'Access denied. You are not the project owner.' });
+      const error = new Error('Access denied. You are not the project owner.');
+      error.statusCode = 403;
+      return next(error);
     }
 
     // 3. Upload file (Cloudinary or local fallback)
@@ -41,10 +49,12 @@ exports.uploadFile = async (req, res) => {
       fileType: req.file.mimetype,
     });
 
-    res.status(201).json(file);
+    res.status(201).json({
+      success: true,
+      data: file,
+    });
   } catch (error) {
-    console.error('File upload controller error:', error);
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
@@ -52,27 +62,33 @@ exports.uploadFile = async (req, res) => {
  * Gets all files belonging to a project.
  * GET /api/files/project/:projectId
  */
-exports.getProjectFiles = async (req, res) => {
+exports.getProjectFiles = async (req, res, next) => {
   try {
     const { projectId } = req.params;
 
     // 1. Fetch project to check ownership
     const project = await Project.findById(projectId);
     if (!project) {
-      return res.status(404).json({ error: 'Project not found' });
+      const error = new Error('Project not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     // 2. Access control check
     if (project.ownerId.toString() !== req.user.id) {
-      return res.status(403).json({ error: 'Access denied. You are not the project owner.' });
+      const error = new Error('Access denied. You are not the project owner.');
+      error.statusCode = 403;
+      return next(error);
     }
 
     // 3. Fetch files
     const files = await File.find({ projectId }).sort({ createdAt: -1 });
-    res.json(files);
+    res.json({
+      success: true,
+      data: files,
+    });
   } catch (error) {
-    console.error('Fetch project files error:', error);
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
@@ -80,16 +96,20 @@ exports.getProjectFiles = async (req, res) => {
  * Deletes a file from project storage.
  * DELETE /api/files/:id
  */
-exports.deleteFile = async (req, res) => {
+exports.deleteFile = async (req, res, next) => {
   try {
     const file = await File.findById(req.params.id);
     if (!file) {
-      return res.status(404).json({ error: 'File not found' });
+      const error = new Error('File not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     // Access control check
     if (file.ownerId.toString() !== req.user.id) {
-      return res.status(403).json({ error: 'Access denied. You do not own this file.' });
+      const error = new Error('Access denied. You do not own this file.');
+      error.statusCode = 403;
+      return next(error);
     }
 
     // 1. Remove from cloud/local storage
@@ -98,9 +118,11 @@ exports.deleteFile = async (req, res) => {
     // 2. Remove metadata from DB
     await file.deleteOne();
 
-    res.json({ message: 'File deleted successfully' });
+    res.json({
+      success: true,
+      data: { message: 'File deleted successfully' },
+    });
   } catch (error) {
-    console.error('Delete file error:', error);
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };

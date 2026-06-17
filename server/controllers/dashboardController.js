@@ -6,7 +6,7 @@ const Task = require('../models/Task');
 // @desc    Get dashboard metrics counters
 // @route   GET /api/dashboard/stats
 // @access  Private
-const getDashboardStats = async (req, res) => {
+const getDashboardStats = async (req, res, next) => {
   try {
     const ownerId = req.user.id;
 
@@ -25,56 +25,62 @@ const getDashboardStats = async (req, res) => {
     ]);
 
     res.json({
-      totalClients,
-      totalProjects,
-      totalTasks,
-      completedTasks,
-      pendingTasks
+      success: true,
+      data: {
+        totalClients,
+        totalProjects,
+        totalTasks,
+        completedTasks,
+        pendingTasks
+      }
     });
   } catch (error) {
-    console.error('Error in getDashboardStats:', error);
-    res.status(500).json({ message: 'Server error retrieving dashboard stats' });
+    next(error);
   }
 };
 
 // @desc    Get recent 5 projects for dashboard
 // @route   GET /api/dashboard/recent-projects
 // @access  Private
-const getRecentProjects = async (req, res) => {
+const getRecentProjects = async (req, res, next) => {
   try {
     const ownerId = req.user.id;
     const recentProjects = await Project.find({ ownerId })
       .sort({ createdAt: -1 })
       .limit(5)
       .populate('clientId', 'name company email');
-    res.json(recentProjects);
+    res.json({
+      success: true,
+      data: recentProjects,
+    });
   } catch (error) {
-    console.error('Error in getRecentProjects:', error);
-    res.status(500).json({ message: 'Server error retrieving recent projects' });
+    next(error);
   }
 };
 
 // @desc    Get recent 5 tasks for dashboard
 // @route   GET /api/dashboard/recent-tasks
 // @access  Private
-const getRecentTasks = async (req, res) => {
+const getRecentTasks = async (req, res, next) => {
   try {
     const ownerId = req.user.id;
     const recentTasks = await Task.find({ ownerId })
       .sort({ createdAt: -1 })
       .limit(5)
       .populate('projectId', 'title');
-    res.json(recentTasks);
+    res.json({
+      success: true,
+      data: recentTasks,
+    });
   } catch (error) {
-    console.error('Error in getRecentTasks:', error);
-    res.status(500).json({ message: 'Server error retrieving recent tasks' });
+    next(error);
   }
 };
 
 // @desc    Get project counts grouped by status
 // @route   GET /api/dashboard/project-status
 // @access  Private
-const getProjectStatusStats = async (req, res) => {
+const getProjectStatusStats = async (req, res, next) => {
   try {
     const ownerId = new mongoose.Types.ObjectId(req.user.id);
     
@@ -96,17 +102,19 @@ const getProjectStatusStats = async (req, res) => {
       }
     });
 
-    res.json(formatted);
+    res.json({
+      success: true,
+      data: formatted,
+    });
   } catch (error) {
-    console.error('Error in getProjectStatusStats:', error);
-    res.status(500).json({ message: 'Server error retrieving project status statistics' });
+    next(error);
   }
 };
 
 // @desc    Get task counts grouped by status
 // @route   GET /api/dashboard/task-status
 // @access  Private
-const getTaskStatusStats = async (req, res) => {
+const getTaskStatusStats = async (req, res, next) => {
   try {
     const ownerId = new mongoose.Types.ObjectId(req.user.id);
 
@@ -127,10 +135,12 @@ const getTaskStatusStats = async (req, res) => {
       }
     });
 
-    res.json(formatted);
+    res.json({
+      success: true,
+      data: formatted,
+    });
   } catch (error) {
-    console.error('Error in getTaskStatusStats:', error);
-    res.status(500).json({ message: 'Server error retrieving task completion statistics' });
+    next(error);
   }
 };
 

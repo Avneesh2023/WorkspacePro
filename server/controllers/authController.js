@@ -11,23 +11,16 @@ const generateToken = (id) => {
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   try {
     const { name, email, password, role } = req.body;
-
-    // Validation
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Please add all required fields (name, email, password)' });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' });
-    }
 
     // Check duplicate email
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      const error = new Error('User already exists');
+      error.statusCode = 400;
+      return next(error);
     }
 
     // Create user
@@ -38,34 +31,27 @@ const registerUser = async (req, res) => {
       role: role || 'user',
     });
 
-    if (user) {
-      res.status(201).json({
+    res.status(201).json({
+      success: true,
+      data: {
         _id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
         token: generateToken(user.id),
-      });
-    } else {
-      res.status(400).json({ message: 'Invalid user data' });
-    }
+      },
+    });
   } catch (error) {
-    console.error('Registration Error:', error);
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    // Validation
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Please add all required fields (email, password)' });
-    }
 
     // Find user
     const user = await User.findOne({ email });
@@ -73,28 +59,36 @@ const loginUser = async (req, res) => {
     // Verify password
     if (user && (await user.matchPassword(password))) {
       res.json({
-        _id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        token: generateToken(user.id),
+        success: true,
+        data: {
+          _id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          token: generateToken(user.id),
+        },
       });
     } else {
-      res.status(401).json({ message: 'Invalid credentials' });
+      const error = new Error('Invalid credentials');
+      error.statusCode = 401;
+      next(error);
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Get user profile
 // @route   GET /api/auth/profile
 // @access  Private
-const getUserProfile = async (req, res) => {
+const getUserProfile = async (req, res, next) => {
   try {
-    res.json(req.user);
+    res.json({
+      success: true,
+      data: req.user,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 

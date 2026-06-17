@@ -3,24 +3,23 @@ const Client = require('../models/Client');
 // @desc    Get all clients for logged-in user
 // @route   GET /api/clients
 // @access  Private
-const getClients = async (req, res) => {
+const getClients = async (req, res, next) => {
   try {
     const clients = await Client.find({ ownerId: req.user.id });
-    res.json(clients);
+    res.json({
+      success: true,
+      data: clients,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Create a new client
 // @route   POST /api/clients
 // @access  Private
-const createClient = async (req, res) => {
+const createClient = async (req, res, next) => {
   const { name, email, phone, company, notes } = req.body;
-
-  if (!name || !email) {
-    return res.status(400).json({ message: 'Please add name and email' });
-  }
 
   try {
     const client = await Client.create({
@@ -31,46 +30,60 @@ const createClient = async (req, res) => {
       company,
       notes,
     });
-    res.status(201).json(client);
+    res.status(201).json({
+      success: true,
+      data: client,
+    });
   } catch (error) {
-    res.status(550).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Get single client by ID
 // @route   GET /api/clients/:id
 // @access  Private
-const getClientById = async (req, res) => {
+const getClientById = async (req, res, next) => {
   try {
     const client = await Client.findById(req.params.id);
     if (!client) {
-      return res.status(404).json({ message: 'Client not found' });
+      const error = new Error('Client not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     // Verify ownership
     if (client.ownerId.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to access this client' });
+      const error = new Error('Not authorized to access this client');
+      error.statusCode = 403;
+      return next(error);
     }
 
-    res.json(client);
+    res.json({
+      success: true,
+      data: client,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Update client
 // @route   PUT /api/clients/:id
 // @access  Private
-const updateClient = async (req, res) => {
+const updateClient = async (req, res, next) => {
   try {
     const client = await Client.findById(req.params.id);
     if (!client) {
-      return res.status(404).json({ message: 'Client not found' });
+      const error = new Error('Client not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     // Verify ownership
     if (client.ownerId.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to access this client' });
+      const error = new Error('Not authorized to access this client');
+      error.statusCode = 403;
+      return next(error);
     }
 
     const updatedClient = await Client.findByIdAndUpdate(
@@ -78,31 +91,41 @@ const updateClient = async (req, res) => {
       req.body,
       { new: true, runValidators: true }
     );
-    res.json(updatedClient);
+    res.json({
+      success: true,
+      data: updatedClient,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // @desc    Delete client
 // @route   DELETE /api/clients/:id
 // @access  Private
-const deleteClient = async (req, res) => {
+const deleteClient = async (req, res, next) => {
   try {
     const client = await Client.findById(req.params.id);
     if (!client) {
-      return res.status(404).json({ message: 'Client not found' });
+      const error = new Error('Client not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     // Verify ownership
     if (client.ownerId.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to access this client' });
+      const error = new Error('Not authorized to access this client');
+      error.statusCode = 403;
+      return next(error);
     }
 
     await Client.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Client removed' });
+    res.json({
+      success: true,
+      data: { message: 'Client removed' },
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
