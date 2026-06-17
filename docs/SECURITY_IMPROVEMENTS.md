@@ -13,6 +13,7 @@ An analysis of the current backend security posture and the vulnerabilities iden
 ### 2. Lack of Rate Limiting
 - **Risk**: Critical authentication endpoints (like `/api/auth/login`) are vulnerable to brute-force attacks and denial-of-service (DoS) attempts.
 - **Remedy**: Restrict login requests to 5 requests per minute per IP using `express-rate-limit`.
+- **Limiter Setup**: Mounted specifically on the `/api/auth/login` endpoint, returning a standardized `{ success: false, message: 'Too many requests. Please try again later.' }` with a `429` status code.
 
 ### 3. Missing Global Error Handling
 - **Risk**: Using scattered and inconsistent `try-catch` blocks leaks internal stack traces, DB errors, and path directories to client response bodies, exposing critical backend secrets.
