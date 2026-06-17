@@ -32,6 +32,10 @@ app.get('/', (req, res) => {
   res.send('WorkspacePro API is running...');
 });
 
+// Centralized global error handling middleware
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
+
 // Port configuration
 const PORT = process.env.PORT || 5000;
 
