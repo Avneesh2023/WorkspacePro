@@ -11,6 +11,8 @@ connectDB();
 
 const helmet = require('helmet');
 
+const morgan = require('morgan');
+
 const app = express();
 
 const path = require('path');
@@ -24,6 +26,10 @@ app.use(
   })
 );
 app.use(express.json());
+
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
 
 // Serve uploads static directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
