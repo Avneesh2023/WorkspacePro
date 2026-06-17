@@ -9,11 +9,14 @@ dotenv.config();
 // Connect to Database
 connectDB();
 
+const helmet = require('helmet');
+
 const app = express();
 
 const path = require('path');
 
 // Middleware
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
