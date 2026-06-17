@@ -33,8 +33,8 @@ export const AuthProvider = ({ children }) => {
         return;
       }
       try {
-        const { data } = await api.get('/auth/profile');
-        setUser(data);
+        const response = await api.get('/auth/profile');
+        setUser(response.data.data);
       } catch (error) {
         console.error('Failed to load user profile:', error.message);
         // Clear token if invalid/expired
@@ -51,9 +51,10 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setLoading(true);
     try {
-      const { data } = await api.post('/auth/login', { email, password });
-      setToken(data.token);
-      setUser({ _id: data._id, name: data.name, email: data.email, role: data.role });
+      const response = await api.post('/auth/login', { email, password });
+      const userData = response.data.data;
+      setToken(userData.token);
+      setUser({ _id: userData._id, name: userData.name, email: userData.email, role: userData.role });
       return { success: true };
     } catch (error) {
       console.error('Login error:', error.response?.data?.message || error.message);
@@ -70,9 +71,10 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password) => {
     setLoading(true);
     try {
-      const { data } = await api.post('/auth/register', { name, email, password });
-      setToken(data.token);
-      setUser({ _id: data._id, name: data.name, email: data.email, role: data.role });
+      const response = await api.post('/auth/register', { name, email, password });
+      const userData = response.data.data;
+      setToken(userData.token);
+      setUser({ _id: userData._id, name: userData.name, email: userData.email, role: userData.role });
       return { success: true };
     } catch (error) {
       console.error('Registration error:', error.response?.data?.message || error.message);

@@ -30,7 +30,7 @@ const uploadFile = async (file, projectId, onUploadProgress) => {
   }
 
   const response = await axios.post(`${API_URL}/upload`, formData, config);
-  return response.data;
+  return response.data.data !== undefined ? response.data.data : response.data;
 };
 
 /**
@@ -38,7 +38,7 @@ const uploadFile = async (file, projectId, onUploadProgress) => {
  */
 const getProjectFiles = async (projectId) => {
   const response = await axios.get(`${API_URL}/project/${projectId}`, getAuthHeaders());
-  return response.data;
+  return response.data.data !== undefined ? response.data.data : response.data;
 };
 
 /**
@@ -46,7 +46,7 @@ const getProjectFiles = async (projectId) => {
  */
 const deleteFile = async (id) => {
   const response = await axios.delete(`${API_URL}/${id}`, getAuthHeaders());
-  return response.data;
+  return response.data.data !== undefined ? response.data.data : response.data;
 };
 
 const fileService = {

@@ -15,27 +15,27 @@ const getAuthHeaders = () => {
 
 const getDashboardStats = async () => {
   const response = await axios.get(`${API_URL}/stats`, getAuthHeaders());
-  return response.data;
+  return response.data.data !== undefined ? response.data.data : response.data;
 };
 
 const getRecentProjects = async () => {
   const response = await axios.get(`${API_URL}/recent-projects`, getAuthHeaders());
-  return response.data;
+  return response.data.data !== undefined ? response.data.data : response.data;
 };
 
 const getRecentTasks = async () => {
   const response = await axios.get(`${API_URL}/recent-tasks`, getAuthHeaders());
-  return response.data;
+  return response.data.data !== undefined ? response.data.data : response.data;
 };
 
 const getProjectStatusStats = async () => {
   const response = await axios.get(`${API_URL}/project-status`, getAuthHeaders());
-  return response.data;
+  return response.data.data !== undefined ? response.data.data : response.data;
 };
 
 const getTaskStatusStats = async () => {
   const response = await axios.get(`${API_URL}/task-status`, getAuthHeaders());
-  return response.data;
+  return response.data.data !== undefined ? response.data.data : response.data;
 };
 
 const dashboardService = {
