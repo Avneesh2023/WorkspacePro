@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -19,16 +20,19 @@ const Register = () => {
 
     if (!name || !email || !password || !confirmPassword) {
       setError('Please fill in all fields');
+      toast.error('Please fill in all fields');
       return;
     }
 
     if (password.length < 6) {
       setError('Password must be at least 6 characters long');
+      toast.error('Password must be at least 6 characters long');
       return;
     }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
 
@@ -37,9 +41,11 @@ const Register = () => {
     setFormLoading(false);
 
     if (result.success) {
+      toast.success('Registration successful! Welcome to Antigravity Workspace.');
       navigate('/dashboard');
     } else {
       setError(result.message);
+      toast.error(result.message || 'Registration failed');
     }
   };
 
@@ -51,7 +57,7 @@ const Register = () => {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <h2 className="text-center text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-          WorkspacePro
+          Antigravity Workspace
         </h2>
         <p className="mt-2 text-center text-sm text-slate-400">
           Create an account to start managing your projects
@@ -141,7 +147,7 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={formLoading}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-indigo-500/20 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-indigo-500/20 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
               >
                 {formLoading ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

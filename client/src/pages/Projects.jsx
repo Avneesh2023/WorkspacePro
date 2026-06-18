@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import projectService from '../services/projectService';
-import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import EmptyState from '../components/EmptyState';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { toast } from 'react-hot-toast';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [deleteSuccess, setDeleteSuccess] = useState('');
-
-  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -30,10 +32,9 @@ const Projects = () => {
     try {
       await projectService.deleteProject(id);
       setProjects(projects.filter((p) => p._id !== id));
-      setDeleteSuccess('Project deleted successfully.');
-      setTimeout(() => setDeleteSuccess(''), 3000);
+      toast.success('Project deleted successfully');
     } catch (err) {
-      alert('Failed to delete project.');
+      toast.error('Failed to delete project');
       console.error(err);
     }
   };
@@ -47,40 +48,7 @@ const Projects = () => {
       {/* Glow effects */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none"></div>
 
-      {/* Navbar */}
-      <nav className="border-b border-slate-800 bg-slate-900/40 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-8">
-              <Link to="/dashboard" className="text-2xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                WorkspacePro
-              </Link>
-              <div className="hidden md:flex items-center gap-6 font-semibold text-sm text-slate-300">
-                <Link to="/dashboard" className="hover:text-white transition-colors">
-                  Dashboard
-                </Link>
-                <Link to="/clients" className="hover:text-white transition-colors">
-                  Clients
-                </Link>
-                <Link to="/projects" className="text-indigo-400 transition-colors">
-                  Projects
-                </Link>
-                <Link to="/tasks" className="hover:text-white transition-colors">
-                  Tasks
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={logout}
-                className="px-4 py-2 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl text-sm font-semibold transition-all cursor-pointer"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main Content */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
@@ -97,35 +65,20 @@ const Projects = () => {
           </Link>
         </div>
 
-        {deleteSuccess && (
-          <div className="mb-6 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold animate-in fade-in duration-200">
-            {deleteSuccess}
-          </div>
-        )}
-
         {loading ? (
-          <div className="h-64 flex flex-col justify-center items-center">
-            <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="mt-4 text-slate-400 text-sm font-medium">Loading projects...</p>
-          </div>
+          <LoadingSpinner fullPage={true} />
         ) : error ? (
           <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-center text-sm font-semibold">
             {error}
           </div>
         ) : projects.length === 0 ? (
-          <div className="p-12 text-center rounded-3xl border border-dashed border-slate-800 bg-slate-900/10">
-            <svg className="w-12 h-12 text-slate-650 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-            <h3 className="text-lg font-bold text-slate-300">No projects found.</h3>
-            <p className="text-slate-500 text-sm mt-1">Create your first project.</p>
-            <Link
-              to="/projects/create"
-              className="inline-block mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 transition-colors text-white font-bold rounded-xl text-xs"
-            >
-              Get Started
-            </Link>
-          </div>
+          <EmptyState
+            title="No projects found"
+            description="Create your first project workspace to map tasks, assign deadlines, and collaborate on documents."
+            actionText="Create First Project"
+            onAction={() => navigate('/projects/create')}
+            iconType="projects"
+          />
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-slate-850 shadow-lg bg-slate-900/20 backdrop-blur-md animate-in fade-in duration-300">
             <table className="min-w-full divide-y divide-slate-800/80">
@@ -152,7 +105,7 @@ const Projects = () => {
                         project.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
                         project.status === 'Review' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
                         project.status === 'In Progress' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                        'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+                        'bg-slate-500/10 text-slate-400 border border-slate-550/20'
                       }`}>
                         {project.status}
                       </span>
@@ -189,6 +142,8 @@ const Projects = () => {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 };

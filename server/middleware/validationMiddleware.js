@@ -32,8 +32,8 @@ const clientValidationRules = [
   body('email').isEmail().withMessage('Invalid email'),
   body('phone')
     .optional({ checkFalsy: true })
-    .matches(/^\+?[1-9]\d{1,14}$/)
-    .withMessage('Invalid phone number'),
+    .matches(/^\+?[\d\s\-()]{7,20}$/)
+    .withMessage('Invalid phone number format'),
   validate,
 ];
 
@@ -48,7 +48,11 @@ const projectValidationRules = [
 ];
 
 const taskValidationRules = [
-  body('title').trim().notEmpty().withMessage('Task title is required'),
+  body('title')
+    .if((value, { req }) => req.method === 'POST' || 'title' in req.body)
+    .trim()
+    .notEmpty()
+    .withMessage('Task title is required'),
   body('dueDate')
     .optional({ checkFalsy: true })
     .isISO8601()
@@ -56,6 +60,7 @@ const taskValidationRules = [
     .withMessage('Invalid due date format'),
   validate,
 ];
+
 
 module.exports = {
   registerValidationRules,

@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import fileService from '../services/fileService';
+import { toast } from 'react-hot-toast';
 
 const FileUpload = ({ projectId, onUploadSuccess }) => {
   const [file, setFile] = useState(null);
@@ -15,6 +16,7 @@ const FileUpload = ({ projectId, onUploadSuccess }) => {
       if (selectedFile.size > 5 * 1024 * 1024) {
         setIsError(true);
         setMessage('File size exceeds 5MB limit.');
+        toast.error('File size exceeds 5MB limit.');
         setFile(null);
         return;
       }
@@ -29,6 +31,7 @@ const FileUpload = ({ projectId, onUploadSuccess }) => {
     if (!file) {
       setIsError(true);
       setMessage('Please select a file first.');
+      toast.error('Please select a file first.');
       return;
     }
 
@@ -43,13 +46,16 @@ const FileUpload = ({ projectId, onUploadSuccess }) => {
         setProgress(percentCompleted);
       });
 
+      toast.success('Asset uploaded successfully!');
       setMessage('File uploaded successfully!');
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
       if (onUploadSuccess) onUploadSuccess();
     } catch (err) {
       setIsError(true);
-      setMessage(err.response?.data?.error || 'Upload failed. Try again.');
+      const errMsg = err.response?.data?.error || 'Upload failed. Try again.';
+      setMessage(errMsg);
+      toast.error(errMsg);
     } finally {
       setUploading(false);
     }
@@ -61,7 +67,7 @@ const FileUpload = ({ projectId, onUploadSuccess }) => {
       <form onSubmit={handleUpload} className="space-y-4">
         <div 
           onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all bg-slate-950/20 hover:bg-slate-950/40"
+          className="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all bg-slate-955/20 hover:bg-slate-955/40"
         >
           <input
             type="file"

@@ -4,6 +4,10 @@ import projectService from '../services/projectService';
 import taskService from '../services/taskService';
 import fileService from '../services/fileService';
 import FileUpload from '../components/FileUpload';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { toast } from 'react-hot-toast';
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -78,29 +82,39 @@ const ProjectDetails = () => {
     try {
       await fileService.deleteFile(fileId);
       setDeleteConfirmId(null);
+      toast.success('Asset deleted successfully');
       fetchFiles();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to delete file.');
+      const errMsg = err.response?.data?.error || 'Failed to delete file.';
+      toast.error(errMsg);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-955 text-white flex justify-center items-center">
-        <div className="text-slate-450">Loading project details...</div>
+      <div className="min-h-screen bg-slate-955 text-white flex flex-col relative overflow-hidden">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <LoadingSpinner fullPage={true} />
+        </main>
+        <Footer />
       </div>
     );
   }
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-slate-955 text-white flex flex-col justify-center items-center p-6">
-        <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-center text-sm font-semibold max-w-md w-full">
-          {error || 'Project not found.'}
-        </div>
-        <Link to="/projects" className="mt-4 text-sm text-indigo-400 hover:text-indigo-300 font-bold">
-          Back to Projects
-        </Link>
+      <div className="min-h-screen bg-slate-955 text-white flex flex-col relative overflow-hidden">
+        <Navbar />
+        <main className="flex-grow flex flex-col justify-center items-center p-6">
+          <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-center text-sm font-semibold max-w-md w-full">
+            {error || 'Project not found.'}
+          </div>
+          <Link to="/projects" className="mt-4 text-sm text-indigo-400 hover:text-indigo-300 font-bold">
+            Back to Projects
+          </Link>
+        </main>
+        <Footer />
       </div>
     );
   }
@@ -110,19 +124,7 @@ const ProjectDetails = () => {
       {/* Glow effects */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none"></div>
 
-      {/* Nav */}
-      <nav className="border-b border-slate-800 bg-slate-900/40 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <Link to="/dashboard" className="text-2xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              WorkspacePro
-            </Link>
-            <Link to="/projects" className="text-sm text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
-              Back to Projects
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main Container */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
@@ -148,7 +150,7 @@ const ProjectDetails = () => {
               project.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
               project.status === 'Review' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
               project.status === 'In Progress' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-              'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+              'bg-slate-500/10 text-slate-400 border border-slate-550/20'
             }`}>
               {project.status}
             </span>
@@ -186,7 +188,7 @@ const ProjectDetails = () => {
               </div>
 
               {tasksLoading ? (
-                <div className="py-6 text-center text-slate-400 text-sm font-medium">Loading tasks...</div>
+                <div className="py-6 text-center text-slate-400 text-sm font-medium animate-pulse">Loading tasks...</div>
               ) : tasks.length === 0 ? (
                 <div className="p-8 border border-dashed border-slate-800 rounded-xl text-center bg-slate-900/10">
                   <svg className="w-10 h-10 text-slate-650 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -246,7 +248,7 @@ const ProjectDetails = () => {
               <h3 className="text-lg font-bold text-white mb-6">Files & Deliverables</h3>
 
               {filesLoading ? (
-                <div className="py-6 text-center text-slate-400 text-sm font-medium">Loading files...</div>
+                <div className="py-6 text-center text-slate-400 text-sm font-medium animate-pulse">Loading files...</div>
               ) : files.length === 0 ? (
                 <div className="p-8 border border-dashed border-slate-800 rounded-xl text-center bg-slate-900/10">
                   <svg className="w-10 h-10 text-slate-650 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -262,7 +264,7 @@ const ProjectDetails = () => {
                   {files.map((file) => {
                     const isImage = file.fileType?.startsWith('image/');
                     return (
-                      <div key={file._id} className="flex items-center justify-between p-3 rounded-xl bg-slate-950/40 border border-slate-850 hover:border-slate-800 transition-colors">
+                      <div key={file._id} className="flex items-center justify-between p-3 rounded-xl bg-slate-955/40 border border-slate-850 hover:border-slate-800 transition-colors">
                         <div className="flex items-center gap-3">
                           {/* Thumbnail / File Icon Preview */}
                           {isImage ? (
@@ -282,7 +284,7 @@ const ProjectDetails = () => {
                             <span className="text-sm font-bold text-slate-200 block truncate max-w-xs md:max-w-md">
                               {file.fileName}
                             </span>
-                            <span className="text-[10px] text-slate-550 font-semibold mt-0.5 block">
+                            <span className="text-[10px] text-slate-500 font-semibold mt-0.5 block">
                               Uploaded: {new Date(file.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
                             </span>
                           </div>
@@ -293,7 +295,7 @@ const ProjectDetails = () => {
                             href={file.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 text-[10px] font-bold text-slate-300 hover:text-white bg-slate-900 transition-all focus:outline-none"
+                            className="px-3 py-1.5 rounded-lg border border-slate-805 hover:border-slate-700 text-[10px] font-bold text-slate-300 hover:text-white bg-slate-900 transition-all focus:outline-none"
                           >
                             Open
                           </a>
@@ -301,8 +303,8 @@ const ProjectDetails = () => {
                             onClick={() => handleDeleteFile(file._id)}
                             className={`px-3 py-1.5 rounded-lg border transition-all focus:outline-none text-[10px] font-bold ${
                               deleteConfirmId === file._id
-                                ? 'border-red-500 bg-red-600 text-white hover:bg-red-500'
-                                : 'border-red-900/30 hover:border-red-800/50 text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40'
+                                ? 'border-red-500 bg-red-650 text-white hover:bg-red-500'
+                                : 'border-red-900/30 hover:border-red-800/50 text-red-400 hover:text-red-300 bg-red-955/20 hover:bg-red-955/40'
                             }`}
                           >
                             {deleteConfirmId === file._id ? 'Confirm?' : 'Delete'}
@@ -326,24 +328,24 @@ const ProjectDetails = () => {
             {project.clientId ? (
               <div className="space-y-3 font-medium">
                 <div>
-                  <span className="text-[10px] text-slate-550 font-bold uppercase block tracking-wider">Client Name</span>
+                  <span className="text-[10px] text-slate-500 font-bold uppercase block tracking-wider">Client Name</span>
                   <span className="text-sm text-slate-200 font-semibold">{project.clientId.name}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-550 font-bold uppercase block tracking-wider">Company</span>
+                  <span className="text-[10px] text-slate-505 font-bold uppercase block tracking-wider">Company</span>
                   <span className="text-sm text-slate-200 font-semibold">{project.clientId.company || '—'}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-550 font-bold uppercase block tracking-wider">Email Address</span>
+                  <span className="text-[10px] text-slate-505 font-bold uppercase block tracking-wider">Email Address</span>
                   <span className="text-sm text-indigo-400 hover:underline">{project.clientId.email}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-550 font-bold uppercase block tracking-wider">Phone Number</span>
+                  <span className="text-[10px] text-slate-505 font-bold uppercase block tracking-wider">Phone Number</span>
                   <span className="text-sm text-slate-300">{project.clientId.phone || '—'}</span>
                 </div>
                 {project.clientId.notes && (
                   <div>
-                    <span className="text-[10px] text-slate-550 font-bold uppercase block tracking-wider">Client Notes</span>
+                    <span className="text-[10px] text-slate-505 font-bold uppercase block tracking-wider">Client Notes</span>
                     <p className="text-xs text-slate-400 mt-1 bg-slate-950 p-2.5 rounded-lg border border-slate-850 leading-relaxed max-h-32 overflow-y-auto whitespace-pre-wrap">
                       {project.clientId.notes}
                     </p>
@@ -356,6 +358,7 @@ const ProjectDetails = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };
