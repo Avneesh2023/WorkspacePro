@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/files';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/files';
 
 // Helper to construct headers with the current JWT token
 const getAuthHeaders = (contentType = 'application/json') => {

@@ -118,7 +118,11 @@ const EditClient = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full bg-slate-955 border border-slate-800 hover:border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-2.5 text-slate-200 focus:outline-none transition-all text-sm"
+                  placeholder="e.g. +91 9876543210"
                 />
+                <span className="text-[10px] text-slate-500 mt-1 block">
+                  Must include country code starting with + (e.g. +91 9876543210)
+                </span>
               </div>
 
               <div>

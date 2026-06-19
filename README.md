@@ -1,150 +1,135 @@
-# WorkspacePro – SaaS Client, Project and Task Management Platform
+# Antigravity Workspace 🚀
 
-A high-performance, responsive, and secure MERN-stack SaaS application engineered to streamline workflows for freelancers, startups, agencies, and small businesses.
-
----
-
-## 1. Executive Summary
-**WorkspacePro** is a centralized Software-as-a-Service (SaaS) management platform designed to unify client relationships, project scopes, task trackers, and team resource files into a single workspace. Unifying disjointed productivity channels, WorkspacePro addresses workspace clutter and mitigates context switching. Built using React 19, Vite, Express, Node.js, and MongoDB, the system isolates user records securely via JWT and enforces strict resource ownership validators at both database and middleware layers.
+A modern, high-fidelity MERN stack SaaS platform built for freelancers, agencies, and teams to manage clients, track project details, prioritize tasks, and store assets securely in a unified workspace.
 
 ---
 
-## 2. Problem Statement
-Freelancers, startups, and agencies face significant friction in day-to-day operations:
-* **Disjointed Channels**: Information is scattered across multiple platforms (e.g. email for client communication, spreadsheets for tracking, Trello for tasks, Google Drive for files).
-* **High Context Switching Costs**: Jumping between tools leads to lost information, missed deadlines, and reduced focus.
-* **Low Visibility**: Startups lack a single dashboard summarizing active client status, project delivery timelines, and critical priorities.
-* **Data Security & Privacy Issues**: Collaborative environments need secure, isolated user workspaces to prevent cross-tenant leakages.
+## 📸 Application Showcase
+
+Here are views of the Antigravity Workspace system:
+
+| View | Screenshot |
+| :--- | :--- |
+| **User Access Control** | ![Register](screenshots/register.png) |
+| **SaaS Analytics Dashboard** | ![Dashboard](screenshots/dashboard.png) |
+| **Client Management** | ![Clients](screenshots/clients.png) |
+| **Projects List** | ![Projects](screenshots/projects.png) |
+| **High-Fidelity Project Details** | ![Project Details](screenshots/project_details.png) |
+| **Task Management Board** | ![Tasks](screenshots/tasks.png) |
 
 ---
 
-## 3. Proposed Solution
-WorkspacePro unifies operations by offering:
-* **Centralized Hub**: A unified workspace organizing clients, projects, tasks, and files.
-* **Granular Security & Authentication**: Strict authentication protocols restricting all data queries using validated JWT tokens.
-* **Isolated Client Directories**: A directory structure where clients are tied to the verified user account.
-* **Interactive Kanban & Project Tracks**: Visual tools to monitor progress, change project states, and set priority attributes.
-* **Unified Dashboard**: Live metrics summarizing account status, active scopes, and pending tasks.
+## ✨ Features
+
+- 🔐 **Secure Session Management**: Built with JWT tokens, encrypted password hashing, custom AuthContext, auto-login hooks, and secure sign-out drawers.
+- 📊 **Visual Performance Analytics**: Renders client distribution, task statuses, recent projects, and overall productivity logs using interactive charts powered by **Recharts**.
+- 👥 **Client Relations**: Easily create, view, edit, and delete client profiles, featuring robust international country-code phone number validation (`+91 9876543210`).
+- 📁 **Project Details & Tasks**: Drill down into projects to monitor budgets, track deadlines, assign tasks (Todo, In Progress, Completed), and review priorities.
+- ☁️ **Cloudinary Media Storage**: Attach project proposals, contracts, assets, and invoices directly to projects with file upload tracking.
+- 🛡️ **Production Security Core**: Armed with `helmet` headers, standard CORS policies, centralized Express middleware error handlers, and login rate limiters.
 
 ---
 
-## 4. Project Objectives
-* **Optimize Operations**: Lower administrative task times so teams can focus on core development.
-* **Unify Workspace Data**: Aggregate files, documents, and project details in one central database.
-* **Robust Security Principles**: Prevent cross-tenant data visibility via strict Mongoose query filters.
-* **Modern Developer Practices**: Leverage Vite's fast compilation and MERN's modular patterns.
-
----
-
-## 5. Technologies Used
+## 🛠️ Tech Stack
 
 ### Frontend
-* **React.js & Vite**: Selected for high-speed compilation, hot-module reloading (HMR), and declarative, stateful UI transitions.
-* **React Router DOM**: Drives efficient single-page application routing, param injection (`useParams`), and client-side guards.
-* **Axios**: Handles promises, requests, response interceptions, and automatically binds the bearer token header.
-* **Tailwind CSS**: Powering a modern visual aesthetic with glassmorphic cards, custom animations, and layout scales.
+- **React (v19)** with Vite (fast bundling & hot module replacement)
+- **Vanilla CSS / Modern Tailwind CSS** (sleek layout, glassmorphism, responsive breakpoints)
+- **Recharts** (clean responsive charts)
+- **React Router DOM** (declarative route navigation)
+- **React Hot Toast** (professional success/error toast alerts)
 
 ### Backend
-* **Node.js & Express.js**: Handles highly concurrent asynchronous network operations, routing, and controller middleware.
-
-### Database
-* **MongoDB & Mongoose**: Flexible document store model perfect for unstructured client notes, metadata fields, and relational mapping via `ObjectId`.
-
-### Security & Services
-* **JWT & bcryptjs**: Handles user auth payload signings, token verifications, and strong cryptographic password salt-hashing.
-* **Cloudinary**: Integrates cloud-backed file assets storage and optimization.
+- **Node.js** & **Express** (scalable RESTful APIs)
+- **MongoDB Atlas** & **Mongoose** (dynamic document modeling)
+- **Cloudinary SDK** (remote file storage)
+- **express-validator** (clean request input validation rules)
+- **express-rate-limit** & **helmet** (production-grade API protection)
 
 ---
 
-## 6. System Architecture
+## 🏗️ System Architecture
 
 ```mermaid
 graph TD
-  User[User / Tenant Account] -->|Creates/Manages| Clients[Clients Directory]
-  User -->|Owns| Projects[Projects Workspace]
-  Clients -->|Linked To| Projects
-  Projects -->|Has Many| Tasks[Task Boards]
-  Projects -->|Attaches| Files[Cloud Assets]
+  User[User / Client App] -->|HTTPS| FE[React / Vite Frontend]
+  FE -->|API Requests with JWT| BE[Express Backend REST API]
+  BE -->|Helmet / Cors / Rate Limiting| Security[Security Layer]
+  Security --> DB[(MongoDB Atlas Database)]
+  Security --> Cloud[(Cloudinary File Store)]
 ```
 
-* **Data Flow**: The frontend routes API calls using `clientService` modules. Express verifies the token via `authMiddleware.js`, loads context into `req.user.id`, and routes to controller queries.
-* **Relationships**: Every record query has `ownerId` filters, isolating data between concurrent users.
+---
+
+## ⚙️ Environment Configurations
+
+### Backend (`server/.env`)
+Create a `.env` file in the `server` folder with the following variables:
+```env
+PORT=5000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/workspacepro
+JWT_SECRET=your_jwt_signing_secret_key
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+CLIENT_URL=http://localhost:5173
+```
+
+### Frontend (`client/.env`)
+Create a `.env` file in the `client` folder with the following variable:
+```env
+VITE_API_URL=http://localhost:5000
+```
 
 ---
 
-## 7. Database Design
+## 🚀 Getting Started
 
-### User Schema
-* `name`: String, required.
-* `email`: String, required, unique index.
-* `password`: String, required (hashed).
-* `role`: String, default 'user'.
+### 1. Prerequisites
+- **Node.js** (v18+)
+- **MongoDB Instance** (Local MongoDB or Atlas Cloud account)
+- **Cloudinary Account** (for file upload integration)
 
-### Client Schema
-* `ownerId`: ObjectId, ref User, indexed.
-* `name`: String, required.
-* `email`: String, required.
-* `phone`: String.
-* `company`: String.
-* `notes`: String.
+### 2. Local Installation
+Clone the repository and install dependencies for both the server and client:
 
-### Project Schema
-* `title`: String, required.
-* `description`: String.
-* `status`: String (Planning, In Progress, Completed).
-* `deadline`: Date.
-* `clientId`: ObjectId, ref Client, indexed.
-* `ownerId`: ObjectId, ref User, indexed.
+```bash
+# Install Server Dependencies
+cd server
+npm install
 
-### Task Schema
-* `projectId`: ObjectId, ref Project, indexed.
-* `title`: String, required.
-* `description`: String.
-* `priority`: String (Low, Medium, High).
-* `dueDate`: Date.
-* `status`: String (To Do, In Progress, Review, Done).
+# Install Client Dependencies
+cd ../client
+npm install
+```
 
----
+### 3. Running the App Local dev environment
+In two separate terminals, boot up the local dev environment:
 
-## 8. Functional Requirements
+```bash
+# Run server (boots on Port 5000)
+cd server
+npm run dev
 
-### Authentication
-* **Register**: Create custom accounts with encrypted passwords.
-* **Login**: Validated sessions returning a JWT.
-* **Logout**: Discards client-side storage keys.
-
-### Client Directory
-* **CRUD**: Create, read, view details modal, edit, and delete business contacts.
-
-### Project & Task Workspace
-* **CRUD**: Organize project milestones and allocate tasks.
+# Run client (boots on http://localhost:5173)
+cd client
+npm run dev
+```
 
 ---
 
-## 9. Feasibility Study
+## 🌐 Production Deployment
 
-* **Technical**: React, Express, and MongoDB are mature, highly documented systems, minimizing implementation risk.
-* **Economic**: Runs entirely within free-tier limits (MongoDB Atlas, Render, Vercel, and Cloudinary), matching zero-budget environments.
-* **Operational**: Highly accessible dashboard design. Single-click deployment links streamline operations.
+### Backend Deployed on **Render**
+1. Create a Web Service connected to your Git repository.
+2. Root directory: `server/`.
+3. Build Command: `npm install`.
+4. Start Command: `node server.js` (or `npm start`).
+5. Configure environment variables matching `server/.env`.
 
----
-
-## 10. Advantages of the Project
-* **Eliminates Clutter**: Reduces browser tabs by organizing tasks, files, and clients.
-* **High Design Standard**: Glassmorphism aesthetic built on dark mode layouts.
-* **Tenant Isolation**: Secure data boundaries across user namespaces.
-
----
-
-## 11. Future Enhancements
-* Real-time team notifications.
-* Role-based access control (Admin, Member, Client).
-* Integrated invoice generation and time tracking.
-* Redis caching and containerization (Docker).
-
----
-
-## 12. Resume & Career Impact
-* **Full-Stack Competency**: Demonstrates absolute proficiency across databases, controller modules, routing mechanisms, state management, and modern styling.
-* **Professional Engineering**: Showcases rigorous Git-flow paradigms, test pipelines, and architectural patterns.
-* **Job Placement Advantage**: Stands out in full-stack developer and software engineering interviews as a complete, deployed, secure SaaS application.
+### Frontend Deployed on **Vercel**
+1. Create a new project on Vercel.
+2. Select your Git repository.
+3. Set the Root directory to `client/`.
+4. Configure the environment variable: `VITE_API_URL` pointing to your deployed Render URL.
+5. Deploy.

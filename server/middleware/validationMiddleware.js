@@ -32,8 +32,8 @@ const clientValidationRules = [
   body('email').isEmail().withMessage('Invalid email'),
   body('phone')
     .optional({ checkFalsy: true })
-    .matches(/^\+?[\d\s\-()]{7,20}$/)
-    .withMessage('Invalid phone number format'),
+    .matches(/^\+[1-9]\d{1,3}[\s\-]?\d{7,12}$/)
+    .withMessage('Phone number must include country code starting with + (e.g. +91 9876543210)'),
   validate,
 ];
 

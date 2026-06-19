@@ -5,7 +5,7 @@ const AuthContext = createContext(null);
 
 // Create axios instance with base URL pointing to the Express server
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api',
 });
 
 export const AuthProvider = ({ children }) => {
