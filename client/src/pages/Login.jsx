@@ -43,7 +43,7 @@ const Login = () => {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <h2 className="text-center text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-          Antigravity Workspace
+          Workspace-Pro
         </h2>
         <p className="mt-2 text-center text-sm text-slate-400">
           Enter your credentials to access your secure dashboard

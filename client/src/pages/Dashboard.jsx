@@ -121,7 +121,7 @@ const Dashboard = () => {
         ) : stats.totalClients === 0 ? (
           <div className="max-w-xl mx-auto mt-12">
             <EmptyState
-              title="Welcome to Antigravity Workspace"
+              title="Welcome to Workspace-Pro"
               description="Start by adding your first client and creating projects to view analytics, track metrics, and manage tasks."
               actionText="Add Client"
               onAction={() => navigate('/clients')}

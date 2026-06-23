@@ -1,4 +1,4 @@
-# Antigravity Workspace 🚀
+# Workspace-Pro 🚀
 
 A modern, high-fidelity MERN stack SaaS platform built for freelancers, agencies, and teams to manage clients, track project details, prioritize tasks, and store assets securely in a unified workspace.
 
@@ -11,7 +11,7 @@ A modern, high-fidelity MERN stack SaaS platform built for freelancers, agencies
 
 ## 📸 Application Showcase
 
-Here are views of the Antigravity Workspace system:
+Here are views of the Workspace-Pro system:
 
 | View | Screenshot |
 | :--- | :--- |

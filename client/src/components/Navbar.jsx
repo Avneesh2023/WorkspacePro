@@ -40,7 +40,7 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             <Link to="/dashboard" className="flex items-center gap-2">
               <span className="text-2xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-tight">
-                Antigravity Workspace
+                Workspace-Pro
               </span>
             </Link>
             <div className="hidden md:flex items-center gap-6 ml-8 font-semibold text-sm">

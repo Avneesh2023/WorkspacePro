@@ -28,7 +28,7 @@ function HomeContent() {
 
       <div className="max-w-md w-full bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-slate-800 text-center relative z-10">
         <h1 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent mb-4">
-          Antigravity Workspace
+          Workspace-Pro
         </h1>
         <p className="text-slate-400 mb-8 font-medium leading-relaxed">
           A premium management dashboard to organize your clients, projects, tasks, and assets in one secure space.
