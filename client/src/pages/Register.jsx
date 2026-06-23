@@ -41,7 +41,7 @@ const Register = () => {
     setFormLoading(false);
 
     if (result.success) {
-      toast.success('Registration successful! Welcome to Antigravity Workspace.');
+      toast.success('Registration successful! Welcome to Workspace-Pro.');
       navigate('/dashboard');
     } else {
       setError(result.message);
