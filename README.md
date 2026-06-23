@@ -1,4 +1,4 @@
-# Workspace-Pro 🚀
+# Workspace-Pro 
 
 A modern, high-fidelity MERN stack SaaS platform built for freelancers, agencies, and teams to manage clients, track project details, prioritize tasks, and store assets securely in a unified workspace.
 
@@ -9,7 +9,7 @@ A modern, high-fidelity MERN stack SaaS platform built for freelancers, agencies
 
 ---
 
-## 📸 Application Showcase
+## Application Showcase
 
 Here are views of the Workspace-Pro system:
 
@@ -24,18 +24,18 @@ Here are views of the Workspace-Pro system:
 
 ---
 
-## ✨ Features
+##  Features
 
-- 🔐 **Secure Session Management**: Built with JWT tokens, encrypted password hashing, custom AuthContext, auto-login hooks, and secure sign-out drawers.
-- 📊 **Visual Performance Analytics**: Renders client distribution, task statuses, recent projects, and overall productivity logs using interactive charts powered by **Recharts**.
-- 👥 **Client Relations**: Easily create, view, edit, and delete client profiles, featuring robust international country-code phone number validation (`+91 9876543210`).
+-  **Secure Session Management**: Built with JWT tokens, encrypted password hashing, custom AuthContext, auto-login hooks, and secure sign-out drawers.
+- **Visual Performance Analytics**: Renders client distribution, task statuses, recent projects, and overall productivity logs using interactive charts powered by **Recharts**.
+-  **Client Relations**: Easily create, view, edit, and delete client profiles, featuring robust international country-code phone number validation (`+91 9876543210`).
 - 📁 **Project Details & Tasks**: Drill down into projects to monitor budgets, track deadlines, assign tasks (Todo, In Progress, Completed), and review priorities.
 - ☁️ **Cloudinary Media Storage**: Attach project proposals, contracts, assets, and invoices directly to projects with file upload tracking.
-- 🛡️ **Production Security Core**: Armed with `helmet` headers, standard CORS policies, centralized Express middleware error handlers, and login rate limiters.
+-  **Production Security Core**: Armed with `helmet` headers, standard CORS policies, centralized Express middleware error handlers, and login rate limiters.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **React (v19)** with Vite (fast bundling & hot module replacement)
@@ -53,7 +53,7 @@ Here are views of the Workspace-Pro system:
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```mermaid
 graph TD
@@ -66,7 +66,7 @@ graph TD
 
 ---
 
-## ⚙️ Environment Configurations
+##  Environment Configurations
 
 ### Backend (`server/.env`)
 Create a `.env` file in the `server` folder with the following variables:
@@ -88,7 +88,7 @@ VITE_API_URL=http://localhost:5000
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Prerequisites
 - **Node.js** (v18+)
@@ -123,7 +123,7 @@ npm run dev
 
 ---
 
-## 🌐 Production Deployment
+##  Production Deployment
 
 ### Backend Deployed on **Render**
 1. Create a Web Service connected to your Git repository.
