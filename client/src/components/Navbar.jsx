@@ -19,6 +19,7 @@ const Navbar = () => {
     { name: 'Clients', path: '/clients' },
     { name: 'Projects', path: '/projects' },
     { name: 'Tasks', path: '/tasks' },
+    { name: 'Live API', path: 'https://workspacepro-backend-igh5.onrender.com', external: true },
   ];
 
   const getInitials = (name) => {
@@ -32,7 +33,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="border-b border-slate-800 bg-slate-900/40 backdrop-blur-md sticky top-0 z-50">
+    <nav className="border-b border-slate-800 bg-slate-950/40 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo & Desktop NavLinks */}
@@ -44,6 +45,19 @@ const Navbar = () => {
             </Link>
             <div className="hidden md:flex items-center gap-6 ml-8 font-semibold text-sm">
               {navLinks.map((link) => {
+                if (link.external) {
+                  return (
+                    <a
+                      key={link.name}
+                      href={link.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="transition-colors py-1 px-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/20"
+                    >
+                      {link.name}
+                    </a>
+                  );
+                }
                 const isActive = location.pathname === link.path || (link.path !== '/dashboard' && location.pathname.startsWith(link.path));
                 return (
                   <Link
@@ -128,6 +142,20 @@ const Navbar = () => {
         <div className="border-t border-slate-800 bg-slate-950/95 md:hidden animate-slide-down">
           <div className="space-y-1 px-2 pb-3 pt-2">
             {navLinks.map((link) => {
+              if (link.external) {
+                return (
+                  <a
+                    key={link.name}
+                    href={link.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block rounded-lg px-3 py-2 text-base font-semibold text-slate-400 hover:bg-slate-800/40 hover:text-white"
+                  >
+                    {link.name}
+                  </a>
+                );
+              }
               const isActive = location.pathname === link.path || (link.path !== '/dashboard' && location.pathname.startsWith(link.path));
               return (
                 <Link

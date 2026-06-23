@@ -2,6 +2,11 @@
 
 A modern, high-fidelity MERN stack SaaS platform built for freelancers, agencies, and teams to manage clients, track project details, prioritize tasks, and store assets securely in a unified workspace.
 
+**Live Application**: [https://workspacepro-client.vercel.app](https://workspacepro-client.vercel.app)  
+**Live API**: [https://workspacepro-backend-igh5.onrender.com](https://workspacepro-backend-igh5.onrender.com)
+
+*(hosted on Render's free tier — the first request after a period of inactivity may take 30-60s to respond while the service spins up)*
+
 ---
 
 ## 📸 Application Showcase
